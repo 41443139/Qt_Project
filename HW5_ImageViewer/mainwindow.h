@@ -2,12 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QMenu>
-#include <QToolBar>
-#include <QAction>
-#include <QLabel>
-#include <QScrollArea>
 #include <QImage>
+
+QT_BEGIN_NAMESPACE
+namespace Ui {
+class MainWindow;
+}
+QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
@@ -18,35 +19,16 @@ public:
     ~MainWindow();
 
 private slots:
-    void openImage();
-    void saveImage();
-    void aboutApp();
+    void on_actionOpen_Image_triggered();
+    void on_actionSave_triggered();
+    void on_actionExit_triggered();
+    void on_actionZoom_In_triggered();
+    void on_actionZoom_Out_triggered();
+    void on_actionReset_Image_triggered();
 
 private:
-    void createActions();
-    void createMenus();
-    void createToolBars();
-
-    // Central Widget 相關元件
-    QScrollArea *scrollArea;
-    QLabel *imageLabel;
+    Ui::MainWindow *ui;
     QImage currentImage;
-
-    // Menus
-    QMenu *fileMenu;
-    QMenu *imageMenu;
-    QMenu *editMenu;
-
-    // ToolBar
-    QToolBar *mainToolBar;
-
-    // Actions
-    QAction *openAction;
-    QAction *saveAction;
-    QAction *exitAction;
-    QAction *zoomInAction;
-    QAction *zoomOutAction;
-    QAction *resetAction;
 };
 
 #endif // MAINWINDOW_H

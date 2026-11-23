@@ -1,0 +1,79 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-c03e82b366b35fab5565.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "HW5_ImageViewer",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "HW5_ImageViewer::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-HW5_ImageViewer-Debug-7cc33b81e0e8b858451e.json",
+					"name" : "HW5_ImageViewer",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "HW5_ImageViewer_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-HW5_ImageViewer_autogen-Debug-cc8c88718c2fb094c990.json",
+					"name" : "HW5_ImageViewer_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "HW5_ImageViewer_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-HW5_ImageViewer_autogen_timestamp_deps-Debug-d6b9a78676217bd033ca.json",
+					"name" : "HW5_ImageViewer_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/James Chen/Documents/Qt_Project/HW5_ImageViewer/build/Desktop_Qt_6_11_2_MinGW_64_bit_Debug",
+		"source" : "C:/Users/James Chen/Documents/Qt_Project/HW5_ImageViewer"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

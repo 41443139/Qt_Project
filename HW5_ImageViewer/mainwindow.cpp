@@ -1,120 +1,34 @@
 #include "mainwindow.h"
-#include <QMenuBar>
+#include "./ui_mainwindow.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QStyle>
-#include <QStatusBar>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
-    setWindowTitle("Desktop Image Processor - HW5");
-    resize(800, 600);
+    ui->setupUi(this);
 
-    // 1. 設定 CentralWidget
-    imageLabel = new QLabel(this);
-    imageLabel->setAlignment(Qt::AlignCenter);
-    imageLabel->setText("請點擊 'Open Image' 開啟圖片");
+    // 補上 Qt 內建系統圖示
+    ui->actionOpen_Image->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
+    ui->actionSave->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
+    ui->actionExit->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
+    ui->actionZoom_In->setIcon(style()->standardIcon(QStyle::SP_ArrowUp));
+    ui->actionZoom_Out->setIcon(style()->standardIcon(QStyle::SP_ArrowDown));
+    ui->actionReset_Image->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
 
-    scrollArea = new QScrollArea(this);
-    scrollArea->setWidget(imageLabel);
-    scrollArea->setWidgetResizable(true);
-    setCentralWidget(scrollArea);
-
-    // 2. 初始化 Actions, Menus, ToolBars
-    createActions();
-    createMenus();
-    createToolBars();
-
-    statusBar()->showMessage("就緒");
+    // 讓 Toolbar 同時顯示圖示與文字
+    ui->toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    ui->label->setText("請點擊 'Open Image' 開啟圖片");
 }
 
 MainWindow::~MainWindow()
 {
+    delete ui;
 }
 
-void MainWindow::createActions()
-{
-    // Open Image Action (共用給 File Menu 與 ToolBar)
-    openAction = new QAction(style()->standardIcon(QStyle::SP_DialogOpenButton), "Open Image", this);
-    openAction->setShortcut(QKeySequence::Open); // Ctrl+O
-    openAction->setStatusTip("開啟影像檔案");
-    connect(openAction, &QAction::triggered, this, &MainWindow::openImage);
-
-    // Save Action (指定 Ctrl+S 快捷鍵)
-    saveAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), "Save", this);
-    saveAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_S)); // Ctrl+S
-    saveAction->setStatusTip("儲存目前影像");
-    connect(saveAction, &QAction::triggered, this, &MainWindow::saveImage);
-
-    // Exit Action
-    exitAction = new QAction(style()->standardIcon(QStyle::SP_DialogCloseButton), "Exit", this);
-    exitAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q));
-    exitAction->setStatusTip("離開應用程式");
-    connect(exitAction, &QAction::triggered, this, &QWidget::close);
-
-    // Image / Edit 預留示範用 Actions
-    zoomInAction = new QAction(style()->standardIcon(QStyle::SP_ArrowUp), "Zoom In", this);
-    zoomInAction->setShortcut(QKeySequence::ZoomIn);
-    connect(zoomInAction, &QAction::triggered, this, [this]() {
-        if (!currentImage.isNull()) {
-            QPixmap pix = imageLabel->pixmap();
-            imageLabel->setPixmap(pix.scaled(pix.size() * 1.2, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        }
-    });
-
-    zoomOutAction = new QAction(style()->standardIcon(QStyle::SP_ArrowDown), "Zoom Out", this);
-    zoomOutAction->setShortcut(QKeySequence::ZoomOut);
-    connect(zoomOutAction, &QAction::triggered, this, [this]() {
-        if (!currentImage.isNull()) {
-            QPixmap pix = imageLabel->pixmap();
-            imageLabel->setPixmap(pix.scaled(pix.size() * 0.8, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        }
-    });
-
-    resetAction = new QAction(style()->standardIcon(QStyle::SP_BrowserReload), "Reset Image", this);
-    resetAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
-    connect(resetAction, &QAction::triggered, this, [this]() {
-        if (!currentImage.isNull()) {
-            imageLabel->setPixmap(QPixmap::fromImage(currentImage));
-        }
-    });
-}
-
-void MainWindow::createMenus()
-{
-    // File Menu
-    fileMenu = menuBar()->addMenu("&File");
-    fileMenu->addAction(openAction);
-    fileMenu->addAction(saveAction);
-    fileMenu->addSeparator();
-    fileMenu->addAction(exitAction);
-
-    // Image Menu
-    imageMenu = menuBar()->addMenu("&Image");
-    imageMenu->addAction(zoomInAction);
-    imageMenu->addAction(zoomOutAction);
-
-    // Edit Menu
-    editMenu = menuBar()->addMenu("&Edit");
-    editMenu->addAction(resetAction);
-}
-
-void MainWindow::createToolBars()
-{
-    mainToolBar = addToolBar("Main Toolbar");
-    mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon); // 同時顯示圖示與文字
-
-    // 將同一個 openAction 與 saveAction 加入 ToolBar
-    mainToolBar->addAction(openAction);
-    mainToolBar->addAction(saveAction);
-    mainToolBar->addSeparator();
-    mainToolBar->addAction(zoomInAction);
-    mainToolBar->addAction(zoomOutAction);
-    mainToolBar->addAction(resetAction);
-}
-
-void MainWindow::openImage()
+void MainWindow::on_actionOpen_Image_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(
         this,
@@ -125,8 +39,8 @@ void MainWindow::openImage()
 
     if (!fileName.isEmpty()) {
         if (currentImage.load(fileName)) {
-            imageLabel->setPixmap(QPixmap::fromImage(currentImage));
-            imageLabel->adjustSize();
+            ui->label->setPixmap(QPixmap::fromImage(currentImage));
+            ui->label->adjustSize();
             statusBar()->showMessage("已載入: " + fileName);
         } else {
             QMessageBox::warning(this, "錯誤", "無法載入該圖片檔案！");
@@ -134,7 +48,7 @@ void MainWindow::openImage()
     }
 }
 
-void MainWindow::saveImage()
+void MainWindow::on_actionSave_triggered()
 {
     if (currentImage.isNull()) {
         QMessageBox::information(this, "提示", "目前沒有可儲存的圖片！");
@@ -149,8 +63,7 @@ void MainWindow::saveImage()
         );
 
     if (!fileName.isEmpty()) {
-        // 儲存目前畫面上顯示的狀態（若未縮放則存原圖）
-        QPixmap currentPix = imageLabel->pixmap();
+        QPixmap currentPix = ui->label->pixmap();
         if (!currentPix.isNull() && currentPix.save(fileName)) {
             statusBar()->showMessage("已儲存至: " + fileName);
         } else {
@@ -159,7 +72,30 @@ void MainWindow::saveImage()
     }
 }
 
-void MainWindow::aboutApp()
+void MainWindow::on_actionExit_triggered()
 {
-    QMessageBox::about(this, "關於", "Qt MainWindow 影像處理工具作業五");
+    close();
+}
+
+void MainWindow::on_actionZoom_In_triggered()
+{
+    if (!currentImage.isNull()) {
+        QPixmap pix = ui->label->pixmap();
+        ui->label->setPixmap(pix.scaled(pix.size() * 1.2, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
+}
+
+void MainWindow::on_actionZoom_Out_triggered()
+{
+    if (!currentImage.isNull()) {
+        QPixmap pix = ui->label->pixmap();
+        ui->label->setPixmap(pix.scaled(pix.size() * 0.8, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
+}
+
+void MainWindow::on_actionReset_Image_triggered()
+{
+    if (!currentImage.isNull()) {
+        ui->label->setPixmap(QPixmap::fromImage(currentImage));
+    }
 }
